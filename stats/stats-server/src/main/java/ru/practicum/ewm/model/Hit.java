@@ -14,13 +14,15 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "stat_hits")
 @NamedNativeQueries({
-        @NamedNativeQuery(name = "getStatsDtoGroupByIp",
-                query = "select h.app_name as app, h.uri_name as uri, count(h.id) as hits from stat_hits as h " +
-                "where (h.create_time between :start and :end) and (h.uri_name in :uris) " +
-                "group by h.app_name, h.uri_name, h.ip_address " +
-                "order by 3 desc", resultSetMapping = "StatsDtoMapping"),
+        @NamedNativeQuery(name = "getStatsDtoWithUniqueIp",
+                query = "select h.app_name as app, h.uri_name as uri, count(distinct(h.ip_address)) as hits " +
+                        "from stat_hits as h " +
+                        "where (h.create_time between :start and :end) and (h.uri_name in :uris) " +
+                        "group by h.app_name, h.uri_name " +
+                        "order by 3 desc", resultSetMapping = "StatsDtoMapping"),
         @NamedNativeQuery(name = "getStatsDto",
-                query = "select h.app_name as app, h.uri_name as uri, count(h.id) as hits from stat_hits as h " +
+                query = "select h.app_name as app, h.uri_name as uri, count(h.ip_address) as hits " +
+                        "from stat_hits as h " +
                         "where (h.create_time between :start and :end) and (h.uri_name in :uris) " +
                         "group by h.app_name, h.uri_name " +
                         "order by 3 desc", resultSetMapping = "StatsDtoMapping")

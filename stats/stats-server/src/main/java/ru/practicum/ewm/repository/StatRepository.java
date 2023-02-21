@@ -10,18 +10,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface StatRepository extends JpaRepository<Hit, Long> {
-    /*@Query("select h from Hit as h where (h.timestamp between ?1 and ?2) and (h.uri in ?3) group by h.ip")
-    List<Hit> findSortByStartAndEndTimestampAndUriInGroupByIp(LocalDateTime start, LocalDateTime end, List<String> uris);
-
-    List<Hit> findByTimestampAfterAndTimestampBeforeAndUriIn(LocalDateTime start, LocalDateTime end, List<String> uris);
-
-    @Query("select h from Hit as h where (h.timestamp between ?1 and ?2) group by h.ip")
-    List<Hit> findSortByStartAndEndTimestampGroupByIp(LocalDateTime start, LocalDateTime end);
-
-    List<Hit> findByTimestampAfterAndTimestampBefore(LocalDateTime start, LocalDateTime end);*/
-
-    @Query(nativeQuery = true, name = "getStatsDtoGroupByIp")
-    List<StatsDto> getStatsGroupByIp(@Param(value = "start") LocalDateTime start,
+    @Query(nativeQuery = true, name = "getStatsDtoWithUniqueIp")
+    List<StatsDto> getStatsDtoWithUniqueIp(@Param(value = "start") LocalDateTime start,
                                      @Param(value = "end") LocalDateTime end,
                                      @Param(value = "uris") List<String> uris);
 
