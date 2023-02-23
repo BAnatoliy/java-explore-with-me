@@ -12,6 +12,7 @@ import ru.practicum.ewm.repository.StatRepository;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -38,8 +39,11 @@ public class StatServiceImpl implements StatService {
         List<StatsDto> stats;
         LocalDateTime startTime = LocalDateTime.parse(start, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         LocalDateTime endTime = LocalDateTime.parse(end, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        validParameters(startTime, endTime, uris);
-
+        validParameters(startTime, endTime);
+        if (uris == null || uris.isEmpty()) {
+            log.debug("Parameter uris is empty");
+            return new ArrayList<>();
+        }
         if (!unique) {
             stats = statRepository.getStats(startTime, endTime, uris);
             log.debug("Get stats when unique is false");
@@ -50,14 +54,10 @@ public class StatServiceImpl implements StatService {
         return stats;
     }
 
-    private void validParameters(LocalDateTime startTime, LocalDateTime endTime, List<String> uris) {
+    private void validParameters(LocalDateTime startTime, LocalDateTime endTime) {
         if (startTime.isAfter(endTime)) {
             log.debug("Parameters is not valid");
             throw new ValidationParametersException("Start time don`t be later end time");
-        }
-        if (uris == null || uris.isEmpty()) {
-            log.debug("Parameters is not valid");
-            throw new ValidationParametersException("List uris don`t be empty and null");
         }
     }
 }

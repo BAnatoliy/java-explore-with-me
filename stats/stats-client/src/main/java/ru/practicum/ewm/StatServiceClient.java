@@ -1,4 +1,4 @@
-package ru.practicum.ewm.client;
+package ru.practicum.ewm;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -6,15 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.ewm.HitRequestDto;
-import ru.practicum.ewm.StatsServiceClient;
 
 import java.util.Map;
 
 @Service
-public class EventClient extends StatsServiceClient { // тестовый класс для проверки клиента
+public class StatServiceClient extends BaseClient { // тестовый класс для проверки клиента
 
-    public EventClient(@Value("${hits-server.url}") String serverUrl, RestTemplateBuilder builder) {
+    public StatServiceClient(@Value("${hits-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(builder
                 .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
                 .requestFactory(HttpComponentsClientHttpRequestFactory::new)

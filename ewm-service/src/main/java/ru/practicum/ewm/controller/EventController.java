@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.HitRequestDto;
-import ru.practicum.ewm.client.EventClient;
+import ru.practicum.ewm.StatServiceClient;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -16,10 +16,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/events/1")
 public class EventController { // тестовый класс для проверки клиента
-    private final EventClient eventClient;
+    private final StatServiceClient statServiceClient;
 
-    public EventController(EventClient eventClient) {
-        this.eventClient = eventClient;
+    public EventController(StatServiceClient statServiceClient) {
+        this.statServiceClient = statServiceClient;
     }
 
     @PostMapping()
@@ -29,7 +29,7 @@ public class EventController { // тестовый класс для прове�
         hitDto.setIp(request.getRemoteAddr());
         hitDto.setApp("ewm-service");
         hitDto.setTimestamp(LocalDateTime.now());
-        return eventClient.sendHit(hitDto);
+        return statServiceClient.sendHit(hitDto);
     }
 
     @GetMapping()
@@ -39,6 +39,6 @@ public class EventController { // тестовый класс для прове�
                 "end", "2023-09-06%2011%3A00%3A23",
                 "uris", List.of("/events/1")
         );
-        return eventClient.getStats(parameters);
+        return statServiceClient.getStats(parameters);
     }
 }

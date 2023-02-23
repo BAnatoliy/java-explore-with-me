@@ -9,10 +9,10 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 
-public class StatsServiceClient {
+public class BaseClient {
     private final RestTemplate rest;
 
-    public StatsServiceClient(RestTemplate rest) {
+    public BaseClient(RestTemplate rest) {
         this.rest = rest;
     }
 
