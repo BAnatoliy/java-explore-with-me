@@ -2,14 +2,12 @@ package ru.practicum.ewm.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.ewm.StatServiceClient;
 import ru.practicum.ewm.dtos.CompilationDto;
 import ru.practicum.ewm.exception.EntityNotFoundException;
 import ru.practicum.ewm.mapper.MapperDto;
 import ru.practicum.ewm.models.Compilation;
 import ru.practicum.ewm.models.Event;
 import ru.practicum.ewm.repositories.CompilationRepository;
-import ru.practicum.ewm.repositories.EventRepository;
 import ru.practicum.ewm.services.CommonEventService;
 import ru.practicum.ewm.services.CompilationPublicService;
 
@@ -23,16 +21,12 @@ import java.util.stream.Collectors;
 public class CompilationPublicServiceImpl implements CompilationPublicService {
     private final CompilationRepository compilationRepository;
     private final CommonEventService commonEventService;
-    private final EventRepository eventRepository;
-    private final StatServiceClient statServiceClient;
     private final MapperDto mapperDto;
 
-    public CompilationPublicServiceImpl(CompilationRepository compilationRepository, CommonEventService commonEventService,
-                                        EventRepository eventRepository, StatServiceClient statServiceClient, MapperDto mapperDto) {
+    public CompilationPublicServiceImpl(CompilationRepository compilationRepository,
+                                        CommonEventService commonEventService, MapperDto mapperDto) {
         this.compilationRepository = compilationRepository;
         this.commonEventService = commonEventService;
-        this.eventRepository = eventRepository;
-        this.statServiceClient = statServiceClient;
         this.mapperDto = mapperDto;
     }
 

@@ -68,7 +68,8 @@ public class CommonEventServiceImpl implements CommonEventService {
                 eventsUri.get(stat.getUri()).setViews(stat.getHits()));
 
         List<Long> eventsId = events.stream().map(Event::getId).collect(Collectors.toList());
-        List<ParticipationRequest> eventsRequests = participationRequestRepository.findAllByEvent_IdInAndStatusIs(eventsId, RequestStatus.CONFIRMED);
+        List<ParticipationRequest> eventsRequests =
+                participationRequestRepository.findAllByEvent_IdInAndStatusIs(eventsId, RequestStatus.CONFIRMED);
         Map<Long, Long> countConfirmedRequestEvents = eventsRequests.stream()
                 .collect(Collectors.groupingBy((participationRequest ->
                         participationRequest.getEvent().getId()), Collectors.counting()));
@@ -91,7 +92,8 @@ public class CommonEventServiceImpl implements CommonEventService {
         }
 
         List<ParticipationRequest> eventsRequests;
-        eventsRequests = participationRequestRepository.findAllByEvent_IdIsAndStatusIs(event.getId(), RequestStatus.CONFIRMED);
+        eventsRequests = participationRequestRepository.findAllByEvent_IdIsAndStatusIs(event.getId(),
+                RequestStatus.CONFIRMED);
         event.setConfirmedRequests((long) eventsRequests.size());
     }
 

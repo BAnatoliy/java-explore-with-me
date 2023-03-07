@@ -20,7 +20,6 @@ public class Compilation {
     private Long id;
     private Boolean pinned;
     private String title;
-    //(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @ManyToMany
     @JoinTable(name = "compilations_events",
             joinColumns = @JoinColumn(name = "compilation_id"),

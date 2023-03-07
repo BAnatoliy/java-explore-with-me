@@ -18,8 +18,6 @@ public interface MapperDto {
 
     List<CompilationDto> mapToListCompilationDto(List<Compilation> compilations);
 
-    Compilation mapToCompilation(CompilationDto compilationDto);
-
     EventShortDto mapToEventShortDto(Event event);
 
     EventFullDto mapToEventFullDto(Event event);
@@ -47,6 +45,8 @@ public interface MapperDto {
 
     List<ParticipationRequestDto> mapToListRequestsDto(List<ParticipationRequest> eventRequests);
 
+    List<EventFullDto> mapToListEventFullDto(List<Event> events);
+
     @Mapping(target = "event", source = "event", qualifiedByName = "getIdFromEvent")
     @Mapping(target = "requester", source = "requester", qualifiedByName = "getIdFromUser")
     @Mapping(target = "created", source = "created", qualifiedByName = "getStringCreated")
@@ -66,6 +66,4 @@ public interface MapperDto {
     default String getStringCreated(LocalDateTime created) {
         return created.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
-
-    List<EventFullDto> mapToListEventFullDto(List<Event> events);
 }

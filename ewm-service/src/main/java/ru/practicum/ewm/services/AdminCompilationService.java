@@ -10,5 +10,4 @@ public interface AdminCompilationService {
     void deleteCompilation(Long compId);
 
     CompilationDto updateCompilation(Long compId, UpdateCompilationRequest updateCompilationRequest);
-
 }

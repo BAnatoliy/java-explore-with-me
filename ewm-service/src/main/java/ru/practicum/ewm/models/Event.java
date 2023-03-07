@@ -26,11 +26,9 @@ public class Event {
     @Transient
     private Long confirmedRequests;
     @Column(name = "created_on")
-    //@Convert(converter = DateTimeConverter.class)
     private LocalDateTime createdOn;
     private String description;
     @Column(name = "event_date")
-    //@Convert(converter = DateTimeConverter.class)
     private LocalDateTime eventDate;
     @OneToOne
     @JoinColumn(name = "user_id")
@@ -49,6 +47,4 @@ public class Event {
     private String title;
     @Transient
     private Long views;
-    //@ManyToMany(mappedBy = "events")
-    //private Set<Compilation> compilations;
 }

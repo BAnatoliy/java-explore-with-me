@@ -19,7 +19,6 @@ public class NewEventDto {
     private Long category;
     @NotBlank
     private String description;
-    //@Convert(converter = DateTimeConverter.class)
     private LocalDateTime eventDate;
     @NotNull
     private Location location;

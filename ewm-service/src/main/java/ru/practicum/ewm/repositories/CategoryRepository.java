@@ -10,6 +10,4 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query(value = "select * from categories as c where c.id > :from limit :size", nativeQuery = true)
     List<Category> findAllByFromSize(@Param(value = "from") Integer from, @Param(value = "size") Integer size);
-
-
 }

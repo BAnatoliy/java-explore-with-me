@@ -30,7 +30,8 @@ public class PublicEventServiceImpl implements PublicEventService {
     private final CommonEventService commonEventService;
     private final MapperDto mapperDto;
 
-    public PublicEventServiceImpl(EntityManager entityManager, CommonEventService commonEventService, MapperDto mapperDto) {
+    public PublicEventServiceImpl(EntityManager entityManager, CommonEventService commonEventService,
+                                  MapperDto mapperDto) {
         this.entityManager = entityManager;
         this.commonEventService = commonEventService;
         this.mapperDto = mapperDto;

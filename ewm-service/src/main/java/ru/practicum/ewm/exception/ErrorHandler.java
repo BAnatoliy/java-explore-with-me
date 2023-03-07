@@ -39,28 +39,6 @@ public class ErrorHandler {
         return apiError;
     }
 
-    /*@ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiError handleEntityNotFoundException(final ServletRequestBindingException e) {
-        Optional<FieldError> optionalFieldError = e.getBindingResult().getFieldErrors().stream().findFirst();
-        String massage = "";
-        if (optionalFieldError.isPresent()) {
-            FieldError fieldError = optionalFieldError.get();
-            String fieldName = fieldError.getField();
-            String value = (String) fieldError.getRejectedValue();
-            String error = fieldError.getDefaultMessage();
-            massage = String.format("Field: %s. Error: %s. Value: %s", fieldName, error, value);
-        }
-        log.warn(massage);
-
-        ApiError apiError = new ApiError();
-        apiError.setStatus(HttpStatus.BAD_REQUEST.name());
-        apiError.setReason("Incorrectly made request.");
-        apiError.setMessage(massage);
-        apiError.setTimestamp(LocalDateTime.now());
-        return apiError;
-    }*/
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleConstraintViolationException(final ConstraintViolationException e) {

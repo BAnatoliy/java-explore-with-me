@@ -17,7 +17,6 @@ public class ParticipationRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    //@Convert(converter = DateTimeConverter.class)
     private LocalDateTime created;
     @ManyToOne
     @JoinColumn(name = "event_id")
