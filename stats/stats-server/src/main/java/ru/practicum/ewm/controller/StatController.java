@@ -1,5 +1,6 @@
 package ru.practicum.ewm.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.HitRequestDto;
@@ -21,6 +22,7 @@ public class StatController {
     }
 
     @PostMapping("/hit")
+    @ResponseStatus(HttpStatus.CREATED)
     public HitResponseDto createStat(@RequestBody @Valid HitRequestDto hitsDto) {
         return statService.createStat(hitsDto);
     }
