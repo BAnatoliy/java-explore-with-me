@@ -1,7 +1,9 @@
-package ru.practicum.ewm;
+package ru.practicum.ewm.mapper;
 
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
+import ru.practicum.ewm.HitRequestDto;
+import ru.practicum.ewm.HitResponseDto;
 import ru.practicum.ewm.model.Hit;
 
 import java.util.List;

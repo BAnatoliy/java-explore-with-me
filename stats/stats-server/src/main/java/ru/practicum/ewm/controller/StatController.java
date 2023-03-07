@@ -1,5 +1,6 @@
 package ru.practicum.ewm.controller;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.HitRequestDto;
@@ -8,6 +9,7 @@ import ru.practicum.ewm.StatsDto;
 import ru.practicum.ewm.service.StatService;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
