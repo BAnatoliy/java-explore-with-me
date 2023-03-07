@@ -106,7 +106,12 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
         request.setCreated(LocalDateTime.now());
         request.setRequester(requester);
         request.setEvent(event);
-        request.setStatus(RequestStatus.PENDING);
+
+        if (event.getRequestModeration()) {
+            request.setStatus(RequestStatus.PENDING);
+        } else {
+            request.setStatus(RequestStatus.CONFIRMED);
+        }
 
         ParticipationRequest savedRequest = participationRequestRepository.save(request);
         log.debug("Request was created");
