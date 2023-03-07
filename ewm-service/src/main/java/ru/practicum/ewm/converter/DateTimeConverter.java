@@ -1,3 +1,4 @@
+/*
 package ru.practicum.ewm.converter;
 
 import javax.persistence.AttributeConverter;
@@ -27,3 +28,4 @@ public class DateTimeConverter implements AttributeConverter<LocalDateTime, Stri
                 Integer.parseInt(time[0]), Integer.parseInt(time[1]), Integer.parseInt(time[2]));
     }
 }
+*/

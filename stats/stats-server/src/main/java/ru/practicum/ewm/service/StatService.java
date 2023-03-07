@@ -4,7 +4,6 @@ import ru.practicum.ewm.HitRequestDto;
 import ru.practicum.ewm.HitResponseDto;
 import ru.practicum.ewm.StatsDto;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface StatService {

@@ -8,7 +8,6 @@ import ru.practicum.ewm.dtos.EventShortDto;
 import ru.practicum.ewm.services.PublicEventService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,11 +26,11 @@ public class EventController {
                                          @RequestParam(value = "categories", required = false) List<Long> categories,
                                          @RequestParam(value = "paid", required = false) Boolean paid,
                                          @RequestParam(value = "rangeStart", required = false)
-                                             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                             LocalDateTime rangeStart,
+                                         @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                         LocalDateTime rangeStart,
                                          @RequestParam(value = "rangeEnd", required = false)
-                                             @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                             LocalDateTime rangeEnd,
+                                         @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                         LocalDateTime rangeEnd,
                                          @RequestParam(value = "onlyAvailable", defaultValue = "false") Boolean onlyAvailable,
                                          @RequestParam(value = "sort", required = false) SortValue sort,
                                          @RequestParam(value = "from", defaultValue = "0") Integer from,

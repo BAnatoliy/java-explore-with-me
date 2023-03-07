@@ -3,9 +3,7 @@ package ru.practicum.ewm.models;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
 import ru.practicum.ewm.constant.RequestStatus;
-import ru.practicum.ewm.converter.DateTimeConverter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

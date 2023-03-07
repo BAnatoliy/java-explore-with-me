@@ -1,3 +1,4 @@
+/*
 package ru.practicum.ewm.valid;
 
 public interface ValidGroups {
@@ -5,3 +6,4 @@ public interface ValidGroups {
 
     interface onUpdate {}
 }
+*/

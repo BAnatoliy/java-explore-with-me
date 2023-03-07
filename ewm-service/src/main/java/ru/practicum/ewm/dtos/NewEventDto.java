@@ -3,10 +3,8 @@ package ru.practicum.ewm.dtos;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.practicum.ewm.converter.DateTimeConverter;
 import ru.practicum.ewm.models.Location;
 
-import javax.persistence.Convert;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;

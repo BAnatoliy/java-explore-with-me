@@ -2,21 +2,13 @@ package ru.practicum.ewm.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.ewm.constant.EventState;
-import ru.practicum.ewm.dtos.*;
 import ru.practicum.ewm.exception.EntityNotFoundException;
-import ru.practicum.ewm.exception.ValidationFieldDtoException;
 import ru.practicum.ewm.mapper.MapperDto;
-import ru.practicum.ewm.models.Category;
-import ru.practicum.ewm.models.Event;
 import ru.practicum.ewm.models.User;
 import ru.practicum.ewm.repositories.EventRepository;
 import ru.practicum.ewm.repositories.UserRepository;
 import ru.practicum.ewm.services.CommonEventService;
 import ru.practicum.ewm.services.UserService;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @Slf4j

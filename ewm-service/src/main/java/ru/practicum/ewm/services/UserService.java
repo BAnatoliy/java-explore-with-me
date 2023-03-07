@@ -1,9 +1,6 @@
 package ru.practicum.ewm.services;
 
-import ru.practicum.ewm.dtos.*;
 import ru.practicum.ewm.models.User;
-
-import java.util.List;
 
 public interface UserService {
     //List<EventShortDto> getEvents(Long userId, Integer from, Integer size);

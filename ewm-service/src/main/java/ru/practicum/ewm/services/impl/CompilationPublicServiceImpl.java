@@ -13,11 +13,8 @@ import ru.practicum.ewm.repositories.EventRepository;
 import ru.practicum.ewm.services.CommonEventService;
 import ru.practicum.ewm.services.CompilationPublicService;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 

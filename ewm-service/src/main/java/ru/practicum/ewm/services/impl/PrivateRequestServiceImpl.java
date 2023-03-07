@@ -2,6 +2,7 @@ package ru.practicum.ewm.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.ewm.constant.EventState;
 import ru.practicum.ewm.constant.RequestStatus;
 import ru.practicum.ewm.constant.RequestStatusToUpdate;
 import ru.practicum.ewm.dtos.EventFullDto;
@@ -24,7 +25,6 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -94,8 +94,10 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
     @Override
     @Transactional
     public ParticipationRequestDto createUserRequest(Long userId, Long eventId) {
-        User requester = userService.getUserOrThrowException(userId);
         Event event = commonEventService.getEventOrThrowException(eventId);
+        commonEventService.setViewAndConfirmedRequestRequestsForTheEvent(event);
+        validRequest(userId, event);
+        User requester = userService.getUserOrThrowException(userId);
         /*Optional<ParticipationRequest> requestOptional = participationRequestRepository.findByRequester_IdIsAndEvent_IdIs(userId, eventId);
         if (requestOptional.isPresent()) {
             throw new ValidEntityException();
@@ -159,6 +161,18 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
                     }
                 }
             }
+        }
+    }
+
+    private void validRequest(Long userId, Event event) {
+        if (event.getInitiator().getId().equals(userId)) {
+            throw new ValidEntityException("Event`s initiator can not be a requester");
+        }
+        if (event.getState() != EventState.PUBLISHED) {
+            throw new ValidEntityException("Event must be published");
+        }
+        if (event.getConfirmedRequests() == (int) event.getParticipantLimit()) {
+            throw new ValidEntityException("The participant limit has been reached");
         }
     }
 }

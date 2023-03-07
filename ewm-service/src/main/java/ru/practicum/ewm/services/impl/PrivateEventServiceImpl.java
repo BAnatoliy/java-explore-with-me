@@ -43,6 +43,9 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     @Transactional
     public EventFullDto createEventByUser(Long userId, NewEventDto newEventDto) {
         User initiator = userService.getUserOrThrowException(userId);
+        if (newEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
+            throw new ValidEntityException("Event must be two hour after now");
+        }
         Event event = mapperDto.mapToEvent(newEventDto);
 
         CategoryDto categoryDto = categoryService.getCategoryById(newEventDto.getCategory());
@@ -83,8 +86,14 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     @Override
     @Transactional
     public EventFullDto updateEventByUser(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest) {
+        if (updateEventUserRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
+            throw new ValidEntityException("Event must be two hour after now");
+        }
         userService.getUserOrThrowException(userId);
         Event oldEvent = getEvent(userId, eventId);
+        if (oldEvent.getState() == EventState.PUBLISHED) {
+            throw new ValidEntityException("Event must be updated if state is not published");
+        }
 
         if (updateEventUserRequest.getAnnotation() != null) {
             oldEvent.setAnnotation(updateEventUserRequest.getAnnotation());

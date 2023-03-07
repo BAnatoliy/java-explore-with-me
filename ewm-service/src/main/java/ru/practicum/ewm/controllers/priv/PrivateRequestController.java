@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dtos.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm.dtos.EventRequestStatusUpdateResult;
 import ru.practicum.ewm.dtos.ParticipationRequestDto;
-import ru.practicum.ewm.repositories.ParticipationRequestRepository;
 import ru.practicum.ewm.services.PrivateRequestService;
 
 import java.util.List;
@@ -23,7 +22,7 @@ public class PrivateRequestController {
 
     @GetMapping("/events/{eventId}/requests")
     public List<ParticipationRequestDto> getEventRequest(@PathVariable(value = "userId") Long userId,
-                                                   @PathVariable(value = "eventId") Long eventId) {
+                                                         @PathVariable(value = "eventId") Long eventId) {
         return privateRequestService.getEventRequest(userId, eventId);
     }
 

@@ -4,10 +4,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.ewm.constant.StateActionForAdmin;
-import ru.practicum.ewm.converter.DateTimeConverter;
 import ru.practicum.ewm.models.Location;
 
-import javax.persistence.Convert;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
@@ -15,10 +13,10 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 public class UpdateEventAdminRequest {
-    @Size(min= 20, max = 2000)
+    @Size(min = 20, max = 2000)
     private String annotation;
     private Long category;
-    @Size(min= 20, max = 7000)
+    @Size(min = 20, max = 7000)
     private String description;
     private LocalDateTime eventDate;
     private Location location;
@@ -26,6 +24,6 @@ public class UpdateEventAdminRequest {
     private Integer participantLimit;
     private Boolean requestModeration;
     private StateActionForAdmin stateAction;
-    @Size(min= 3, max = 120)
+    @Size(min = 3, max = 120)
     private String title;
 }

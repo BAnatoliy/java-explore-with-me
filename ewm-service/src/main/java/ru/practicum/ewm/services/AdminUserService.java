@@ -1,9 +1,8 @@
 package ru.practicum.ewm.services;
 
-import ru.practicum.ewm.constant.EventState;
-import ru.practicum.ewm.dtos.*;
+import ru.practicum.ewm.dtos.NewUserRequest;
+import ru.practicum.ewm.dtos.UserDto;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface AdminUserService {

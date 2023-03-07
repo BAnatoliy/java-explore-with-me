@@ -66,5 +66,6 @@ public interface MapperDto {
     default String getStringCreated(LocalDateTime created) {
         return created.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
+
     List<EventFullDto> mapToListEventFullDto(List<Event> events);
 }
