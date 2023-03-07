@@ -86,7 +86,8 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     @Override
     @Transactional
     public EventFullDto updateEventByUser(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest) {
-        if (updateEventUserRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
+        if (updateEventUserRequest.getEventDate() != null &&
+                updateEventUserRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ValidEntityException("Event must be two hour after now");
         }
         userService.getUserOrThrowException(userId);
@@ -121,11 +122,11 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         if (updateEventUserRequest.getRequestModeration() != null) {
             oldEvent.setRequestModeration(updateEventUserRequest.getRequestModeration());
         }
-            if (updateEventUserRequest.getStateAction() == StateActionForUser.SEND_TO_REVIEW) {
-                oldEvent.setState(EventState.PENDING);
-            } else {
-                oldEvent.setState(EventState.CANCELED);
-            }
+        if (updateEventUserRequest.getStateAction() == StateActionForUser.SEND_TO_REVIEW) {
+            oldEvent.setState(EventState.PENDING);
+        } else {
+            oldEvent.setState(EventState.CANCELED);
+        }
         if (updateEventUserRequest.getTitle() != null) {
             oldEvent.setTitle(updateEventUserRequest.getTitle());
         }
