@@ -4,7 +4,6 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import ru.practicum.ewm.dtos.NewUserRequest;
 import ru.practicum.ewm.dtos.UserDto;
-import ru.practicum.ewm.dtos.UserShortDto;
 import ru.practicum.ewm.models.User;
 
 import java.util.List;
