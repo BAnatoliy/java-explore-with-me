@@ -6,7 +6,7 @@ import ru.practicum.ewm.dtos.CompilationDto;
 import ru.practicum.ewm.dtos.NewCompilationDto;
 import ru.practicum.ewm.dtos.UpdateCompilationRequest;
 import ru.practicum.ewm.exception.EntityNotFoundException;
-import ru.practicum.ewm.mapper.MapperDto;
+import ru.practicum.ewm.mapper.CompilationMapper;
 import ru.practicum.ewm.models.Compilation;
 import ru.practicum.ewm.models.Event;
 import ru.practicum.ewm.repositories.CompilationRepository;
@@ -24,13 +24,13 @@ import java.util.Set;
 public class AdminCompilationServiceImpl implements AdminCompilationService {
     private final CommonEventService commonEventService;
     private final CompilationRepository compilationRepository;
-    private final MapperDto mapperDto;
+    private final CompilationMapper compilationMapper;
 
     public AdminCompilationServiceImpl(CommonEventService commonEventService,
-                                       CompilationRepository compilationRepository, MapperDto mapperDto) {
+                                       CompilationRepository compilationRepository, CompilationMapper compilationMapper) {
         this.commonEventService = commonEventService;
         this.compilationRepository = compilationRepository;
-        this.mapperDto = mapperDto;
+        this.compilationMapper = compilationMapper;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
         Compilation savedCompilation = compilationRepository.save(compilation);
         log.debug("Compilation is created");
         setViewAndRequestForEvents(savedCompilation);
-        return mapperDto.mapToCompilationDto(savedCompilation);
+        return compilationMapper.mapToCompilationDto(savedCompilation);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
         Compilation updatedCompilation = compilationRepository.save(oldCompilation);
         log.debug("Compilation with ID = {} is updated", compId);
         setViewAndRequestForEvents(updatedCompilation);
-        return mapperDto.mapToCompilationDto(updatedCompilation);
+        return compilationMapper.mapToCompilationDto(updatedCompilation);
     }
 
     private Compilation getCompilationOrThrowException(Long compId) {

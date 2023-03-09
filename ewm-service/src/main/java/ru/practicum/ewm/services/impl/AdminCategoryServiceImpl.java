@@ -6,7 +6,7 @@ import ru.practicum.ewm.dtos.CategoryDto;
 import ru.practicum.ewm.dtos.NewCategoryDto;
 import ru.practicum.ewm.exception.EntityNotFoundException;
 import ru.practicum.ewm.exception.ValidEntityException;
-import ru.practicum.ewm.mapper.MapperDto;
+import ru.practicum.ewm.mapper.CategoryMapper;
 import ru.practicum.ewm.models.Category;
 import ru.practicum.ewm.repositories.CategoryRepository;
 import ru.practicum.ewm.services.AdminCategoryService;
@@ -17,20 +17,20 @@ import javax.transaction.Transactional;
 @Slf4j
 public class AdminCategoryServiceImpl implements AdminCategoryService {
     private final CategoryRepository categoryRepository;
-    private final MapperDto mapperDto;
+    private final CategoryMapper categoryMapper;
 
-    public AdminCategoryServiceImpl(CategoryRepository categoryRepository, MapperDto mapperDto) {
+    public AdminCategoryServiceImpl(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
         this.categoryRepository = categoryRepository;
-        this.mapperDto = mapperDto;
+        this.categoryMapper = categoryMapper;
     }
 
     @Override
     @Transactional
     public CategoryDto createCategory(NewCategoryDto newCategoryDto) {
-        Category category = mapperDto.mapToCategoryFromNewCategoryDto(newCategoryDto);
+        Category category = categoryMapper.mapToCategoryFromNewCategoryDto(newCategoryDto);
         Category savedCategory = categoryRepository.save(category);
         log.debug("Category is saved");
-        return mapperDto.mapToCategoryDto(savedCategory);
+        return categoryMapper.mapToCategoryDto(savedCategory);
     }
 
     @Override
@@ -48,12 +48,12 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     @Transactional
     public CategoryDto updateCategory(Long catId, NewCategoryDto newCategoryDto) {
         getCategoryOrThrowException(catId);
-        Category category = mapperDto.mapToCategoryFromNewCategoryDto(newCategoryDto);
+        Category category = categoryMapper.mapToCategoryFromNewCategoryDto(newCategoryDto);
         category.setId(catId);
         category.setName(newCategoryDto.getName());
         Category savedCategory = categoryRepository.save(category);
         log.debug("Category with ID = {} is updated", catId);
-        return mapperDto.mapToCategoryDto(savedCategory);
+        return categoryMapper.mapToCategoryDto(savedCategory);
     }
 
     private Category getCategoryOrThrowException(Long catId) {

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.ewm.dtos.NewUserRequest;
 import ru.practicum.ewm.dtos.UserDto;
 import ru.practicum.ewm.exception.EntityNotFoundException;
-import ru.practicum.ewm.mapper.MapperDto;
+import ru.practicum.ewm.mapper.UserMapper;
 import ru.practicum.ewm.models.User;
 import ru.practicum.ewm.repositories.UserRepository;
 import ru.practicum.ewm.services.AdminUserService;
@@ -17,27 +17,27 @@ import java.util.List;
 @Slf4j
 public class AdminUserServiceImpl implements AdminUserService {
     private final UserRepository userRepository;
-    private final MapperDto mapperDto;
+    private final UserMapper userMapper;
 
-    public AdminUserServiceImpl(UserRepository userRepository, MapperDto mapperDto) {
+    public AdminUserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
-        this.mapperDto = mapperDto;
+        this.userMapper = userMapper;
     }
 
     @Override
     public List<UserDto> getUsers(List<Long> ids, Integer from, Integer size) {
         List<User> users = userRepository.getUserByParameters(ids, from, size);
         log.debug("Get users list");
-        return mapperDto.mapToUserDtoList(users);
+        return userMapper.mapToUserDtoList(users);
     }
 
     @Override
     @Transactional
     public UserDto createUser(NewUserRequest newUserRequest) {
-        User user = mapperDto.mapToUser(newUserRequest);
+        User user = userMapper.mapToUser(newUserRequest);
         User savedUser = userRepository.save(user);
         log.debug("User is saved");
-        return mapperDto.mapToUserDto(savedUser);
+        return userMapper.mapToUserDto(savedUser);
     }
 
     @Override

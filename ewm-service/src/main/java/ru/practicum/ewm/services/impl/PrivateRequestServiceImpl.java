@@ -11,7 +11,7 @@ import ru.practicum.ewm.dtos.EventRequestStatusUpdateResult;
 import ru.practicum.ewm.dtos.ParticipationRequestDto;
 import ru.practicum.ewm.exception.EntityNotFoundException;
 import ru.practicum.ewm.exception.ValidEntityException;
-import ru.practicum.ewm.mapper.MapperDto;
+import ru.practicum.ewm.mapper.RequestMapper;
 import ru.practicum.ewm.models.Event;
 import ru.practicum.ewm.models.ParticipationRequest;
 import ru.practicum.ewm.models.User;
@@ -33,16 +33,16 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
     private final UserService userService;
     private final CommonEventService commonEventService;
     private final PrivateEventService privateEventService;
-    private final MapperDto mapperDto;
+    private final RequestMapper requestMapper;
 
     public PrivateRequestServiceImpl(ParticipationRequestRepository participationRequestRepository,
                                      UserService userService, CommonEventService commonEventService,
-                                     PrivateEventService privateEventService, MapperDto mapperDto) {
+                                     PrivateEventService privateEventService, RequestMapper requestMapper) {
         this.participationRequestRepository = participationRequestRepository;
         this.userService = userService;
         this.commonEventService = commonEventService;
         this.privateEventService = privateEventService;
-        this.mapperDto = mapperDto;
+        this.requestMapper = requestMapper;
     }
 
     @Override
@@ -50,7 +50,7 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
         privateEventService.getEventsByIdByInitiator(userId, eventId);
         List<ParticipationRequest> eventRequests = participationRequestRepository.findAllByEvent_IdIs(eventId);
         log.debug("Get the event`s request list by event ID = {} and user ID = {}", eventId, userId);
-        return mapperDto.mapToListRequestsDto(eventRequests);
+        return requestMapper.mapToListRequestsDto(eventRequests);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
         setNewStatusToRequest(eventRequestStatusUpdateRequest, event, requestsToUpdate);
 
         List<ParticipationRequest> updatedRequests = participationRequestRepository.saveAll(requestsToUpdate);
-        List<ParticipationRequestDto> requestDtos = mapperDto.mapToListRequestsDto(updatedRequests);
+        List<ParticipationRequestDto> requestDtos = requestMapper.mapToListRequestsDto(updatedRequests);
         EventRequestStatusUpdateResult result = new EventRequestStatusUpdateResult();
 
         List<ParticipationRequestDto> confirmedRequest = new ArrayList<>();
@@ -88,7 +88,7 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
         userService.getUserOrThrowException(userId);
         List<ParticipationRequest> requests = participationRequestRepository.findAllByRequester_IdIs(userId);
         log.debug("Get the user`s requests list");
-        return mapperDto.mapToListRequestsDto(requests);
+        return requestMapper.mapToListRequestsDto(requests);
     }
 
     @Override
@@ -115,7 +115,7 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
 
         ParticipationRequest savedRequest = participationRequestRepository.save(request);
         log.debug("Request was created");
-        return mapperDto.mapToRequestDto(savedRequest);
+        return requestMapper.mapToRequestDto(savedRequest);
     }
 
     @Override
@@ -129,7 +129,7 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
         request.setStatus(RequestStatus.CANCELED);
         ParticipationRequest updatedRequest = participationRequestRepository.save(request);
         log.debug("Request with ID = {} was canceled", requestId);
-        return mapperDto.mapToRequestDto(updatedRequest);
+        return requestMapper.mapToRequestDto(updatedRequest);
     }
 
     private ParticipationRequest getRequestOrThrowException(Long requestId) {

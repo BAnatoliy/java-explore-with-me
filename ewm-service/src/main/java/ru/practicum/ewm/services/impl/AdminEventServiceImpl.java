@@ -8,11 +8,11 @@ import ru.practicum.ewm.dtos.CategoryDto;
 import ru.practicum.ewm.dtos.EventFullDto;
 import ru.practicum.ewm.dtos.UpdateEventAdminRequest;
 import ru.practicum.ewm.exception.ValidEntityException;
-import ru.practicum.ewm.mapper.MapperDto;
+import ru.practicum.ewm.mapper.CategoryMapper;
+import ru.practicum.ewm.mapper.EventMapper;
 import ru.practicum.ewm.models.Event;
 import ru.practicum.ewm.repositories.EventRepository;
 import ru.practicum.ewm.services.AdminEventService;
-import ru.practicum.ewm.services.AdminUserService;
 import ru.practicum.ewm.services.CategoryService;
 import ru.practicum.ewm.services.CommonEventService;
 
@@ -29,20 +29,20 @@ import java.util.List;
 @Slf4j
 public class AdminEventServiceImpl implements AdminEventService {
     private final EventRepository eventRepository;
-    private final AdminUserService adminUserService;
-    private final MapperDto mapperDto;
+    private final EventMapper eventMapper;
+    private final CategoryMapper categoryMapper;
     private final CommonEventService commonEventService;
     private final CategoryService categoryService;
     private final EntityManager entityManager;
 
-    public AdminEventServiceImpl(EventRepository eventRepository, AdminUserService adminUserService,
-                                 MapperDto mapperDto, CommonEventService commonEventService, CategoryService categoryService,
+    public AdminEventServiceImpl(EventRepository eventRepository, EventMapper eventMapper, CategoryMapper categoryMapper,
+                                 CommonEventService commonEventService, CategoryService categoryService,
                                  EntityManager entityManager) {
         this.eventRepository = eventRepository;
-        this.adminUserService = adminUserService;
-        this.mapperDto = mapperDto;
-        this.categoryService = categoryService;
+        this.eventMapper = eventMapper;
+        this.categoryMapper = categoryMapper;
         this.commonEventService = commonEventService;
+        this.categoryService = categoryService;
         this.entityManager = entityManager;
     }
 
@@ -92,7 +92,7 @@ public class AdminEventServiceImpl implements AdminEventService {
         }
         commonEventService.setViewAndConfirmedRequestsForEvents(events);
         log.debug("Get event`s list with parameters");
-        return mapperDto.mapToListEventFullDto(events);
+        return eventMapper.mapToListEventFullDto(events);
     }
 
     @Override
@@ -105,7 +105,7 @@ public class AdminEventServiceImpl implements AdminEventService {
         }
         if (updateEventAdminRequest.getCategory() != null) {
             CategoryDto categoryDto = categoryService.getCategoryById(updateEventAdminRequest.getCategory());
-            oldEvent.setCategory(mapperDto.mapToCategoryFromCategoryDto(categoryDto));
+            oldEvent.setCategory(categoryMapper.mapToCategoryFromCategoryDto(categoryDto));
         }
         if (updateEventAdminRequest.getDescription() != null) {
             oldEvent.setDescription(updateEventAdminRequest.getDescription());
@@ -138,7 +138,7 @@ public class AdminEventServiceImpl implements AdminEventService {
         }
         Event savedEvent = eventRepository.save(oldEvent);
         commonEventService.setViewAndConfirmedRequestRequestsForTheEvent(savedEvent);
-        return mapperDto.mapToEventFullDto(savedEvent);
+        return eventMapper.mapToEventFullDto(savedEvent);
     }
 
     private void validUpdateEvent(UpdateEventAdminRequest updateEventAdminRequest, Event event) {

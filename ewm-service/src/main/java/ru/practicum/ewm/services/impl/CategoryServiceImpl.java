@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.dtos.CategoryDto;
 import ru.practicum.ewm.exception.EntityNotFoundException;
-import ru.practicum.ewm.mapper.MapperDto;
+import ru.practicum.ewm.mapper.CategoryMapper;
 import ru.practicum.ewm.models.Category;
 import ru.practicum.ewm.repositories.CategoryRepository;
 import ru.practicum.ewm.services.CategoryService;
@@ -15,18 +15,18 @@ import java.util.List;
 @Slf4j
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
-    private final MapperDto mapperDto;
+    private final CategoryMapper categoryMapper;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, MapperDto mapperDto) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
         this.categoryRepository = categoryRepository;
-        this.mapperDto = mapperDto;
+        this.categoryMapper = categoryMapper;
     }
 
     @Override
     public List<CategoryDto> getCategories(Integer from, Integer size) {
         List<Category> categoryList = categoryRepository.findAllByFromSize(from, size);
         log.debug("Get categories list with parameters from = {}, size = {}", from, size);
-        return mapperDto.mapToListCategoryDto(categoryList);
+        return categoryMapper.mapToListCategoryDto(categoryList);
     }
 
     @Override
@@ -34,6 +34,6 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryRepository.findById(catId).orElseThrow(() ->
                 new EntityNotFoundException(String.format("Category with id=%s was not found", catId)));
         log.debug("Category with ID = {} was found", catId);
-        return mapperDto.mapToCategoryDto(category);
+        return categoryMapper.mapToCategoryDto(category);
     }
 }

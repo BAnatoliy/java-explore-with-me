@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.dtos.CompilationDto;
 import ru.practicum.ewm.exception.EntityNotFoundException;
-import ru.practicum.ewm.mapper.MapperDto;
+import ru.practicum.ewm.mapper.CompilationMapper;
 import ru.practicum.ewm.models.Compilation;
 import ru.practicum.ewm.models.Event;
 import ru.practicum.ewm.repositories.CompilationRepository;
@@ -21,13 +21,13 @@ import java.util.stream.Collectors;
 public class CompilationPublicServiceImpl implements CompilationPublicService {
     private final CompilationRepository compilationRepository;
     private final CommonEventService commonEventService;
-    private final MapperDto mapperDto;
+    private final CompilationMapper compilationMapper;
 
     public CompilationPublicServiceImpl(CompilationRepository compilationRepository,
-                                        CommonEventService commonEventService, MapperDto mapperDto) {
+                                        CommonEventService commonEventService, CompilationMapper compilationMapper) {
         this.compilationRepository = compilationRepository;
         this.commonEventService = commonEventService;
-        this.mapperDto = mapperDto;
+        this.compilationMapper = compilationMapper;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class CompilationPublicServiceImpl implements CompilationPublicService {
         }
 
         log.debug("Get list of compilations with parameter pinned {}", pinned);
-        return mapperDto.mapToListCompilationDto(compilations);
+        return compilationMapper.mapToListCompilationDto(compilations);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class CompilationPublicServiceImpl implements CompilationPublicService {
             commonEventService.setViewAndConfirmedRequestsForEvents(new ArrayList<>(setEvents));
         }
         log.debug("Get compilation with ID = {}", compId);
-        return mapperDto.mapToCompilationDto(compilation);
+        return compilationMapper.mapToCompilationDto(compilation);
     }
 
     private Compilation getCompilationOrThrowException(Long compId) {

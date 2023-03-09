@@ -6,7 +6,8 @@ import ru.practicum.ewm.constant.EventState;
 import ru.practicum.ewm.constant.StateActionForUser;
 import ru.practicum.ewm.dtos.*;
 import ru.practicum.ewm.exception.ValidEntityException;
-import ru.practicum.ewm.mapper.MapperDto;
+import ru.practicum.ewm.mapper.CategoryMapper;
+import ru.practicum.ewm.mapper.EventMapper;
 import ru.practicum.ewm.models.Category;
 import ru.practicum.ewm.models.Event;
 import ru.practicum.ewm.models.User;
@@ -27,16 +28,18 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     private final UserService userService;
     private final CommonEventService commonEventService;
     private final CategoryServiceImpl categoryService;
-    private final MapperDto mapperDto;
+    private final EventMapper eventMapper;
+    private final CategoryMapper categoryMapper;
 
     public PrivateEventServiceImpl(EventRepository eventRepository, UserService userService,
                                    CommonEventService commonEventService, CategoryServiceImpl categoryService,
-                                   MapperDto mapperDto) {
+                                   EventMapper eventMapper, CategoryMapper categoryMapper) {
         this.eventRepository = eventRepository;
         this.userService = userService;
         this.commonEventService = commonEventService;
         this.categoryService = categoryService;
-        this.mapperDto = mapperDto;
+        this.eventMapper = eventMapper;
+        this.categoryMapper = categoryMapper;
     }
 
     @Override
@@ -46,11 +49,11 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         if (newEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ValidEntityException("Event must be two hour after now");
         }
-        Event event = mapperDto.mapToEvent(newEventDto);
+        Event event = eventMapper.mapToEvent(newEventDto);
 
         CategoryDto categoryDto = categoryService.getCategoryById(newEventDto.getCategory());
 
-        event.setCategory(mapperDto.mapToCategoryFromCategoryDto(categoryDto));
+        event.setCategory(categoryMapper.mapToCategoryFromCategoryDto(categoryDto));
         event.setInitiator(initiator);
         event.setCreatedOn(LocalDateTime.now());
         event.setState(EventState.PENDING);
@@ -59,7 +62,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         savedEvent.setViews(0L);
         savedEvent.setConfirmedRequests(0L);
         log.debug("Event was created");
-        return mapperDto.mapToEventFullDto(savedEvent);
+        return eventMapper.mapToEventFullDto(savedEvent);
     }
 
     @Override
@@ -71,7 +74,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         }
         commonEventService.setViewAndConfirmedRequestsForEvents(events);
         log.debug("Get events list by the user with ID = {}", userId);
-        return mapperDto.mapToListEventShortDto(events);
+        return eventMapper.mapToListEventShortDto(events);
     }
 
     @Override
@@ -80,7 +83,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         Event event = getEvent(userId, eventId);
         commonEventService.setViewAndConfirmedRequestRequestsForTheEvent(event);
         log.debug("Get event with ID = {} and initiator with ID = {}", eventId, userId);
-        return mapperDto.mapToEventFullDto(event);
+        return eventMapper.mapToEventFullDto(event);
     }
 
     @Override
@@ -100,7 +103,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
             oldEvent.setAnnotation(updateEventUserRequest.getAnnotation());
         }
         if (updateEventUserRequest.getCategory() != null) {
-            Category category = mapperDto.mapToCategoryFromCategoryDto(
+            Category category = categoryMapper.mapToCategoryFromCategoryDto(
                     categoryService.getCategoryById(updateEventUserRequest.getCategory()));
             oldEvent.setCategory(category);
         }
@@ -133,7 +136,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         Event updatedEvent = eventRepository.save(oldEvent);
         commonEventService.setViewAndConfirmedRequestRequestsForTheEvent(updatedEvent);
         log.debug("Event with ID = {} is updated", eventId);
-        return mapperDto.mapToEventFullDto(updatedEvent);
+        return eventMapper.mapToEventFullDto(updatedEvent);
     }
 
     private Event getEvent(Long userId, Long eventId) {

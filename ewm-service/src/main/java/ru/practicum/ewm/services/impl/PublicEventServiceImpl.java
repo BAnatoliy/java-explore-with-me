@@ -6,7 +6,7 @@ import ru.practicum.ewm.constant.SortValue;
 import ru.practicum.ewm.dtos.EventFullDto;
 import ru.practicum.ewm.dtos.EventShortDto;
 import ru.practicum.ewm.exception.ValidEntityException;
-import ru.practicum.ewm.mapper.MapperDto;
+import ru.practicum.ewm.mapper.EventMapper;
 import ru.practicum.ewm.models.Event;
 import ru.practicum.ewm.services.CommonEventService;
 import ru.practicum.ewm.services.PublicEventService;
@@ -28,13 +28,13 @@ import java.util.stream.Collectors;
 public class PublicEventServiceImpl implements PublicEventService {
     private final EntityManager entityManager;
     private final CommonEventService commonEventService;
-    private final MapperDto mapperDto;
+    private final EventMapper eventMapper;
 
     public PublicEventServiceImpl(EntityManager entityManager, CommonEventService commonEventService,
-                                  MapperDto mapperDto) {
+                                  EventMapper eventMapper) {
         this.entityManager = entityManager;
         this.commonEventService = commonEventService;
-        this.mapperDto = mapperDto;
+        this.eventMapper = eventMapper;
     }
 
     @Override
@@ -112,7 +112,7 @@ public class PublicEventServiceImpl implements PublicEventService {
         commonEventService.setViewAndConfirmedRequestsForEvents(events);
         commonEventService.sendStat(events, request);
         log.debug("Get event`s list with parameters");
-        return mapperDto.mapToListEventShortDto(events);
+        return eventMapper.mapToListEventShortDto(events);
     }
 
     @Override
@@ -121,6 +121,6 @@ public class PublicEventServiceImpl implements PublicEventService {
         commonEventService.setViewAndConfirmedRequestRequestsForTheEvent(event);
         commonEventService.sendStat(event, request);
         log.debug("Get event with ID = {} from public service", event);
-        return mapperDto.mapToEventFullDto(event);
+        return eventMapper.mapToEventFullDto(event);
     }
 }
