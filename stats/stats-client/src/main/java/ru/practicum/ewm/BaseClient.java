@@ -21,13 +21,13 @@ public class BaseClient {
     }
 
     public ResponseEntity<Object> get(Map<String, Object> parameters) {
-        return makeAndSendRequest(HttpMethod.GET, "/stats", parameters, null);
+        return makeAndSendRequest(HttpMethod.GET, "/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters, null);
     }
 
     private ResponseEntity<Object> makeAndSendRequest(HttpMethod method,
-                                                          String path,
-                                                          @Nullable Map<String, Object> parameters,
-                                                          @Nullable HitRequestDto body) {
+                                                      String path,
+                                                      @Nullable Map<String, Object> parameters,
+                                                      @Nullable HitRequestDto body) {
         HttpEntity<?> requestEntity;
         if (body != null) {
             requestEntity = new HttpEntity<>(body);

@@ -2,7 +2,7 @@ package ru.practicum.ewm.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.ewm.HitMapper;
+import ru.practicum.ewm.mapper.HitMapper;
 import ru.practicum.ewm.HitRequestDto;
 import ru.practicum.ewm.HitResponseDto;
 import ru.practicum.ewm.StatsDto;
