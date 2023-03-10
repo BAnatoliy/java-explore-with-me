@@ -98,10 +98,7 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
         commonEventService.setViewAndConfirmedRequestRequestsForTheEvent(event);
         validRequest(userId, event);
         User requester = userService.getUserOrThrowException(userId);
-        /*Optional<ParticipationRequest> requestOptional = participationRequestRepository.findByRequester_IdIsAndEvent_IdIs(userId, eventId);
-        if (requestOptional.isPresent()) {
-            throw new ValidEntityException();
-        }*/
+
         ParticipationRequest request = new ParticipationRequest();
         request.setCreated(LocalDateTime.now());
         request.setRequester(requester);

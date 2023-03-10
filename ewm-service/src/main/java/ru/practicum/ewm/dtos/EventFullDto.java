@@ -8,6 +8,8 @@ import ru.practicum.ewm.constant.EventState;
 import ru.practicum.ewm.models.Location;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -32,4 +34,5 @@ public class EventFullDto {
     private EventState state;
     private String title;
     private Long views;
+    private Set<CommentDto> comments = new HashSet<>();
 }

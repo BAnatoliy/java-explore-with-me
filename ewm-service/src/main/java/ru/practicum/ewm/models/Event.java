@@ -8,6 +8,8 @@ import ru.practicum.ewm.constant.EventState;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -30,7 +32,7 @@ public class Event {
     private String description;
     @Column(name = "event_date")
     private LocalDateTime eventDate;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User initiator;
     @Embedded
@@ -47,4 +49,6 @@ public class Event {
     private String title;
     @Transient
     private Long views;
+    @OneToMany(mappedBy = "event")
+    private Set<Comment> comments = new HashSet<>();
 }
