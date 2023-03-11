@@ -63,9 +63,6 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto createComment(NewCommentDto newCommentDto, Long userId, Long eventId) {
         User author = userService.getUserOrThrowException(userId);
         Event event = commonEventService.getEventOrThrowException(eventId);
-        if (event.getEventDate().isBefore(LocalDateTime.now())) {
-            throw new ValidEntityException(String.format("Event with ID = %s not finished yet", eventId));
-        }
         requestRepository.findByRequester_IdAndEvent_IdAndStatusIs(userId, eventId, RequestStatus.CONFIRMED)
                 .orElseThrow(() ->
                         new ValidEntityException(String.format("User with ID = %s wasn`t participant by event with ID = %s",
@@ -119,6 +116,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDto> getCommentsByEventIdByAdmin(Long eventId, Integer from, Integer size) {
+        commonEventService.getEventOrThrowException(eventId);
         List<Comment> eventComments = commentRepository.findAllByEvent_Id(eventId, from, size);
         log.debug("Get comment`s list of event with ID = {}", eventId);
         return eventMapper.mapToListCommentDto(eventComments);

@@ -19,7 +19,8 @@ public class AdminCommentController {
     }
 
     @GetMapping
-    public List<CommentDto> getCommentsByEventId(@RequestParam(value = "eventId") Long eventId,
+    public List<CommentDto> getCommentsByEventId(@Positive
+                                                 @RequestParam(value = "eventId") Long eventId,
                                                  @PositiveOrZero
                                                  @RequestParam(value = "from", defaultValue = "0") Integer from,
                                                  @Positive

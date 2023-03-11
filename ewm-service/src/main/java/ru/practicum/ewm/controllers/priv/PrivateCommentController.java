@@ -1,5 +1,7 @@
 package ru.practicum.ewm.controllers.priv;
 
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dtos.CommentDto;
@@ -7,6 +9,8 @@ import ru.practicum.ewm.dtos.NewCommentDto;
 import ru.practicum.ewm.services.CommentService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,6 +25,7 @@ public class PrivateCommentController {
     }
 
     @PostMapping("/{eventId}")
+    @ResponseStatus(HttpStatus.CREATED)
     public CommentDto createComment(@RequestBody @Valid NewCommentDto newCommentDto,
                                     @PathVariable(value = "userId") Long userId,
                                     @PathVariable(value = "eventId") Long eventId) {
@@ -42,14 +47,21 @@ public class PrivateCommentController {
 
     @GetMapping
     public List<CommentDto> getUserCommentsByCreateTime(@PathVariable(value = "userId") Long userId,
-                                                        @RequestParam(value = "from") Integer from,
-                                                        @RequestParam(value = "size") Integer size,
-                                                        @RequestParam(value = "createStart") LocalDateTime createStart,
-                                                        @RequestParam(value = "createEnd") LocalDateTime createEnd) {
+                                                        @PositiveOrZero
+                                                        @RequestParam(value = "from", defaultValue = "0") Integer from,
+                                                        @Positive
+                                                        @RequestParam(value = "size", defaultValue = "10") Integer size,
+                                                        @RequestParam(value = "createStart", required = false)
+                                                        @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                        LocalDateTime createStart,
+                                                        @RequestParam(value = "createEnd", required = false)
+                                                        @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                        LocalDateTime createEnd) {
         return commentService.getUserCommentsByCreateTime(userId, createStart, createEnd, from, size);
     }
 
     @DeleteMapping("/{commentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCommentByUser(@PathVariable(value = "userId") Long userId,
                                     @PathVariable(value = "commentId") Long commentId) {
         commentService.deleteCommentByUser(userId, commentId);
