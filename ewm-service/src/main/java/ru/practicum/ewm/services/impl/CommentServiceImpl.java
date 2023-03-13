@@ -50,7 +50,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentDto updateComment(NewCommentDto newCommentDto, Long userId, Long commentId) {
-        Comment oldComment = checkAuthorOfCommentAndReturnComment(userId, commentId);
+        Comment oldComment = getValidComment(userId, commentId);
         oldComment.setText(newCommentDto.getText());
         oldComment.setEdited(LocalDateTime.now());
         Comment savedComment = commentRepository.save(oldComment);
@@ -61,8 +61,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentDto createComment(NewCommentDto newCommentDto, Long userId, Long eventId) {
-        User author = userService.getUserOrThrowException(userId);
-        Event event = commonEventService.getEventOrThrowException(eventId);
+        User author = userService.findUserById(userId);
+        Event event = commonEventService.findEventById(eventId);
         requestRepository.findByRequester_IdAndEvent_IdAndStatusIs(userId, eventId, RequestStatus.CONFIRMED)
                 .orElseThrow(() ->
                         new ValidEntityException(String.format("User with ID = %s wasn`t participant by event with ID = %s",
@@ -81,7 +81,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<CommentDto> getUserCommentsByCreateTime(Long userId, LocalDateTime createStart,
                                                         LocalDateTime createEnd, Integer from, Integer size) {
-        userService.getUserOrThrowException(userId);
+        userService.findUserById(userId);
 
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Comment> query = builder.createQuery(Comment.class);
@@ -116,7 +116,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDto> getCommentsByEventIdByAdmin(Long eventId, Integer from, Integer size) {
-        commonEventService.getEventOrThrowException(eventId);
+        commonEventService.findEventById(eventId);
         List<Comment> eventComments = commentRepository.findAllByEvent_Id(eventId, from, size);
         log.debug("Get comment`s list of event with ID = {}", eventId);
         return eventMapper.mapToListCommentDto(eventComments);
@@ -124,14 +124,14 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDto getCommentsByIdByUser(Long userId, Long commentId) {
-        Comment comment = checkAuthorOfCommentAndReturnComment(userId, commentId);
+        Comment comment = getValidComment(userId, commentId);
         log.debug("Get comment with ID = {}", commentId);
         return eventMapper.mapToCommentDto(comment);
     }
 
     @Override
     public CommentDto getCommentsByIdByAdmin(Long commentId) {
-        Comment comment = getCommentOrThrowException(commentId);
+        Comment comment = findCommentById(commentId);
         log.debug("Comment with ID = {} was found", commentId);
         return eventMapper.mapToCommentDto(comment);
     }
@@ -139,7 +139,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void deleteCommentByUser(Long userId, Long commentId) {
-        checkAuthorOfCommentAndReturnComment(userId, commentId);
+        getValidComment(userId, commentId);
         deleteComment(commentId);
     }
 
@@ -150,19 +150,19 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private void deleteComment(Long commentId) {
-        getCommentOrThrowException(commentId);
+        findCommentById(commentId);
         commentRepository.deleteById(commentId);
         log.debug("Comment with ID = {} was delete", commentId);
     }
 
-    private Comment getCommentOrThrowException(Long commentId) {
+    private Comment findCommentById(Long commentId) {
         return commentRepository.findById(commentId).orElseThrow(() ->
                 new EntityNotFoundException(String.format("Comment with id=%s was not found", commentId)));
     }
 
-    private Comment checkAuthorOfCommentAndReturnComment(Long userId, Long commentId) {
-        userService.getUserOrThrowException(userId);
-        Comment comment = getCommentOrThrowException(commentId);
+    private Comment getValidComment(Long userId, Long commentId) {
+        userService.findUserById(userId);
+        Comment comment = findCommentById(commentId);
         if (!comment.getAuthor().getId().equals(userId)) {
             throw new ValidEntityException(String.format("User is not author comment with ID = %s", commentId));
         }
