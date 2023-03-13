@@ -6,13 +6,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface CommonEventService {
-    void setViewAndConfirmedRequestsForEvents(List<Event> events);
+    void setViewsAndRequestsToEvents(List<Event> events);
 
-    void setViewAndConfirmedRequestRequestsForTheEvent(Event event);
+    void setViewsAndRequestsToEvent(Event event);
 
     List<Event> getEventsByIds(List<Long> eventsIds);
 
-    Event getEventOrThrowException(Long eventId);
+    Event findEventById(Long eventId);
 
     void sendStat(List<Event> events, HttpServletRequest request);
 

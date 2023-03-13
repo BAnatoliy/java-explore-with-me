@@ -27,7 +27,8 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
     private final CompilationMapper compilationMapper;
 
     public AdminCompilationServiceImpl(CommonEventService commonEventService,
-                                       CompilationRepository compilationRepository, CompilationMapper compilationMapper) {
+                                       CompilationRepository compilationRepository,
+                                       CompilationMapper compilationMapper) {
         this.commonEventService = commonEventService;
         this.compilationRepository = compilationRepository;
         this.compilationMapper = compilationMapper;
@@ -44,14 +45,14 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
 
         Compilation savedCompilation = compilationRepository.save(compilation);
         log.debug("Compilation is created");
-        setViewAndRequestForEvents(savedCompilation);
+        setViewAndRequestToEvents(savedCompilation);
         return compilationMapper.mapToCompilationDto(savedCompilation);
     }
 
     @Override
     @Transactional
     public void deleteCompilation(Long compId) {
-        getCompilationOrThrowException(compId);
+        findCompilationById(compId);
         compilationRepository.deleteById(compId);
         log.debug("Compilation with ID = {} is deleted", compId);
     }
@@ -59,7 +60,7 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
     @Override
     @Transactional
     public CompilationDto updateCompilation(Long compId, UpdateCompilationRequest updateCompilationRequest) {
-        Compilation oldCompilation = getCompilationOrThrowException(compId);
+        Compilation oldCompilation = findCompilationById(compId);
         List<Long> eventsIds = updateCompilationRequest.getEvents();
         if (eventsIds != null) {
             List<Event> events = commonEventService.getEventsByIds(updateCompilationRequest.getEvents());
@@ -73,22 +74,22 @@ public class AdminCompilationServiceImpl implements AdminCompilationService {
         }
         Compilation updatedCompilation = compilationRepository.save(oldCompilation);
         log.debug("Compilation with ID = {} is updated", compId);
-        setViewAndRequestForEvents(updatedCompilation);
+        setViewAndRequestToEvents(updatedCompilation);
         return compilationMapper.mapToCompilationDto(updatedCompilation);
     }
 
-    private Compilation getCompilationOrThrowException(Long compId) {
+    private Compilation findCompilationById(Long compId) {
         return compilationRepository.findById(compId).orElseThrow(() -> {
             log.debug("Compilation with ID {} not found", compId);
             return new EntityNotFoundException(String.format("Compilation with id=%s was not found", compId));
         });
     }
 
-    private void setViewAndRequestForEvents(Compilation compilation) {
+    private void setViewAndRequestToEvents(Compilation compilation) {
         Set<Event> setEvents = compilation.getEvents();
         if (!setEvents.isEmpty()) {
             List<Event> events = new ArrayList<>(setEvents);
-            commonEventService.setViewAndConfirmedRequestsForEvents(events);
+            commonEventService.setViewsAndRequestsToEvents(events);
         }
     }
 }

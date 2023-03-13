@@ -44,7 +44,7 @@ public class CompilationPublicServiceImpl implements CompilationPublicService {
                 .collect(Collectors.toSet());
 
         if (!events.isEmpty()) {
-            commonEventService.setViewAndConfirmedRequestsForEvents(new ArrayList<>(events));
+            commonEventService.setViewsAndRequestsToEvents(new ArrayList<>(events));
         }
 
         log.debug("Get list of compilations with parameter pinned {}", pinned);
@@ -53,16 +53,16 @@ public class CompilationPublicServiceImpl implements CompilationPublicService {
 
     @Override
     public CompilationDto getCompilationsById(Long compId) {
-        Compilation compilation = getCompilationOrThrowException(compId);
+        Compilation compilation = findCompilationById(compId);
         Set<Event> setEvents = compilation.getEvents();
         if (!setEvents.isEmpty()) {
-            commonEventService.setViewAndConfirmedRequestsForEvents(new ArrayList<>(setEvents));
+            commonEventService.setViewsAndRequestsToEvents(new ArrayList<>(setEvents));
         }
         log.debug("Get compilation with ID = {}", compId);
         return compilationMapper.mapToCompilationDto(compilation);
     }
 
-    private Compilation getCompilationOrThrowException(Long compId) {
+    private Compilation findCompilationById(Long compId) {
         return compilationRepository.findById(compId).orElseThrow(() -> {
             log.debug("Compilation with ID {} not found", compId);
             return new EntityNotFoundException(String.format("Compilation with id=%s was not found", compId));

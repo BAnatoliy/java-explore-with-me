@@ -45,7 +45,7 @@ public class CommonEventServiceImpl implements CommonEventService {
     }
 
     @Override
-    public void setViewAndConfirmedRequestsForEvents(List<Event> events) {
+    public void setViewsAndRequestsToEvents(List<Event> events) {
         LocalDateTime start = events.get(0).getCreatedOn();
         List<String> uris = new ArrayList<>();
         Map<String, Event> eventsUri = new HashMap<>();
@@ -79,7 +79,7 @@ public class CommonEventServiceImpl implements CommonEventService {
     }
 
     @Override
-    public void setViewAndConfirmedRequestRequestsForTheEvent(Event event) {
+    public void setViewsAndRequestsToEvent(Event event) {
         String startTime = event.getCreatedOn().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String endTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         List<String> uris = List.of("/events/" + event.getId());
@@ -98,7 +98,7 @@ public class CommonEventServiceImpl implements CommonEventService {
     }
 
     @Override
-    public Event getEventOrThrowException(Long eventId) {
+    public Event findEventById(Long eventId) {
         return eventRepository.findById(eventId).orElseThrow(() ->
                 new EntityNotFoundException(String.format("Event with id=%s was not found", eventId))
         );
@@ -116,7 +116,7 @@ public class CommonEventServiceImpl implements CommonEventService {
         requestDto.setApp(nameService);
         requestDto.setIp(request.getRemoteAddr());
         statServiceClient.sendHit(requestDto);
-        sendStatForEveryEvent(events, remoteAddr, now, nameService);
+        sendStatToEveryEvent(events, remoteAddr, now, nameService);
     }
 
     @Override
@@ -131,11 +131,11 @@ public class CommonEventServiceImpl implements CommonEventService {
         requestDto.setApp(nameService);
         requestDto.setIp(request.getRemoteAddr());
         statServiceClient.sendHit(requestDto);
-        sendStatForTheEvent(events.getId(), remoteAddr, now, nameService);
+        sendStatToEvent(events.getId(), remoteAddr, now, nameService);
     }
 
-    private void sendStatForEveryEvent(List<Event> events, String remoteAddr,
-                                       LocalDateTime now, String nameService) {
+    private void sendStatToEveryEvent(List<Event> events, String remoteAddr,
+                                      LocalDateTime now, String nameService) {
         for (Event event : events) {
             HitRequestDto requestDto = new HitRequestDto();
             requestDto.setTimestamp(now);
@@ -146,8 +146,8 @@ public class CommonEventServiceImpl implements CommonEventService {
         }
     }
 
-    private void sendStatForTheEvent(Long eventId, String remoteAddr,
-                                     LocalDateTime now, String nameService) {
+    private void sendStatToEvent(Long eventId, String remoteAddr,
+                                 LocalDateTime now, String nameService) {
         HitRequestDto requestDto = new HitRequestDto();
         requestDto.setTimestamp(now);
         requestDto.setUri("/events/" + eventId);

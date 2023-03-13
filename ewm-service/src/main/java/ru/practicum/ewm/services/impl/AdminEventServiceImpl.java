@@ -74,7 +74,8 @@ public class AdminEventServiceImpl implements AdminEventService {
             criteria = builder.and(criteria, containStates);
         }
         if (rangeStart != null) {
-            Predicate greaterTime = builder.greaterThanOrEqualTo(root.get("eventDate").as(LocalDateTime.class), rangeStart);
+            Predicate greaterTime = builder.greaterThanOrEqualTo(root.get("eventDate")
+                    .as(LocalDateTime.class), rangeStart);
             criteria = builder.and(criteria, greaterTime);
         }
         if (rangeEnd != null) {
@@ -90,14 +91,14 @@ public class AdminEventServiceImpl implements AdminEventService {
         if (events.size() == 0) {
             return new ArrayList<>();
         }
-        commonEventService.setViewAndConfirmedRequestsForEvents(events);
+        commonEventService.setViewsAndRequestsToEvents(events);
         log.debug("Get event`s list with parameters");
         return eventMapper.mapToListEventFullDto(events);
     }
 
     @Override
     public EventFullDto updateEvent(Long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
-        Event oldEvent = commonEventService.getEventOrThrowException(eventId);
+        Event oldEvent = commonEventService.findEventById(eventId);
         validUpdateEvent(updateEventAdminRequest, oldEvent);
 
         if (updateEventAdminRequest.getAnnotation() != null) {
@@ -137,7 +138,7 @@ public class AdminEventServiceImpl implements AdminEventService {
             log.debug("Event with ID = {} is canceled", eventId);
         }
         Event savedEvent = eventRepository.save(oldEvent);
-        commonEventService.setViewAndConfirmedRequestRequestsForTheEvent(savedEvent);
+        commonEventService.setViewsAndRequestsToEvent(savedEvent);
         return eventMapper.mapToEventFullDto(savedEvent);
     }
 

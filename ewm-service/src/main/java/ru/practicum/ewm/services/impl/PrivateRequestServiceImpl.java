@@ -85,7 +85,7 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
 
     @Override
     public List<ParticipationRequestDto> getUserRequests(Long userId) {
-        userService.getUserOrThrowException(userId);
+        userService.findUserById(userId);
         List<ParticipationRequest> requests = participationRequestRepository.findAllByRequester_IdIs(userId);
         log.debug("Get the user`s requests list");
         return requestMapper.mapToListRequestsDto(requests);
@@ -94,14 +94,11 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
     @Override
     @Transactional
     public ParticipationRequestDto createUserRequest(Long userId, Long eventId) {
-        Event event = commonEventService.getEventOrThrowException(eventId);
-        commonEventService.setViewAndConfirmedRequestRequestsForTheEvent(event);
+        Event event = commonEventService.findEventById(eventId);
+        commonEventService.setViewsAndRequestsToEvent(event);
         validRequest(userId, event);
-        User requester = userService.getUserOrThrowException(userId);
-        /*Optional<ParticipationRequest> requestOptional = participationRequestRepository.findByRequester_IdIsAndEvent_IdIs(userId, eventId);
-        if (requestOptional.isPresent()) {
-            throw new ValidEntityException();
-        }*/
+        User requester = userService.findUserById(userId);
+
         ParticipationRequest request = new ParticipationRequest();
         request.setCreated(LocalDateTime.now());
         request.setRequester(requester);
@@ -121,8 +118,8 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
     @Override
     @Transactional
     public ParticipationRequestDto cancelUserRequest(Long userId, Long requestId) {
-        userService.getUserOrThrowException(userId);
-        ParticipationRequest request = getRequestOrThrowException(requestId);
+        userService.findUserById(userId);
+        ParticipationRequest request = findRequestById(requestId);
         if (!request.getRequester().getId().equals(userId)) {
             throw new ValidEntityException(String.format("User with ID = %s is not requester the request", userId));
         }
@@ -132,7 +129,7 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
         return requestMapper.mapToRequestDto(updatedRequest);
     }
 
-    private ParticipationRequest getRequestOrThrowException(Long requestId) {
+    private ParticipationRequest findRequestById(Long requestId) {
         return participationRequestRepository.findById(requestId).orElseThrow(() ->
                 new EntityNotFoundException(String.format("Request with id=%s was not found", requestId))
         );
