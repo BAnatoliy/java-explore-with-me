@@ -45,7 +45,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
     @Override
     @Transactional
     public EventFullDto createEventByUser(Long userId, NewEventDto newEventDto) {
-        User initiator = userService.getUserOrThrowException(userId);
+        User initiator = userService.findUserById(userId);
         if (newEventDto.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ValidEntityException("Event must be two hour after now");
         }
@@ -67,21 +67,21 @@ public class PrivateEventServiceImpl implements PrivateEventService {
 
     @Override
     public List<EventShortDto> getEventsByUser(Long userId, Integer from, Integer size) {
-        userService.getUserOrThrowException(userId);
+        userService.findUserById(userId);
         List<Event> events = eventRepository.findByUserIdByFromSize(userId, from, size);
         if (events.size() == 0) {
             return new ArrayList<>();
         }
-        commonEventService.setViewAndConfirmedRequestsForEvents(events);
+        commonEventService.setViewsAndRequestsToEvents(events);
         log.debug("Get events list by the user with ID = {}", userId);
         return eventMapper.mapToListEventShortDto(events);
     }
 
     @Override
     public EventFullDto getEventsByIdByInitiator(Long userId, Long eventId) {
-        userService.getUserOrThrowException(userId);
-        Event event = getEvent(userId, eventId);
-        commonEventService.setViewAndConfirmedRequestRequestsForTheEvent(event);
+        userService.findUserById(userId);
+        Event event = findEventById(userId, eventId);
+        commonEventService.setViewsAndRequestsToEvent(event);
         log.debug("Get event with ID = {} and initiator with ID = {}", eventId, userId);
         return eventMapper.mapToEventFullDto(event);
     }
@@ -93,8 +93,8 @@ public class PrivateEventServiceImpl implements PrivateEventService {
                 updateEventUserRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new ValidEntityException("Event must be two hour after now");
         }
-        userService.getUserOrThrowException(userId);
-        Event oldEvent = getEvent(userId, eventId);
+        userService.findUserById(userId);
+        Event oldEvent = findEventById(userId, eventId);
         if (oldEvent.getState() == EventState.PUBLISHED) {
             throw new ValidEntityException("Event must be updated if state is not published");
         }
@@ -134,13 +134,13 @@ public class PrivateEventServiceImpl implements PrivateEventService {
             oldEvent.setTitle(updateEventUserRequest.getTitle());
         }
         Event updatedEvent = eventRepository.save(oldEvent);
-        commonEventService.setViewAndConfirmedRequestRequestsForTheEvent(updatedEvent);
+        commonEventService.setViewsAndRequestsToEvent(updatedEvent);
         log.debug("Event with ID = {} is updated", eventId);
         return eventMapper.mapToEventFullDto(updatedEvent);
     }
 
-    private Event getEvent(Long userId, Long eventId) {
-        Event event = commonEventService.getEventOrThrowException(eventId);
+    private Event findEventById(Long userId, Long eventId) {
+        Event event = commonEventService.findEventById(eventId);
         if (!event.getInitiator().getId().equals(userId)) {
             throw new ValidEntityException(String.format("User with ID = %s is not initiator the event", userId));
         }

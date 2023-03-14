@@ -109,7 +109,7 @@ public class PublicEventServiceImpl implements PublicEventService {
             return new ArrayList<>();
         }
 
-        commonEventService.setViewAndConfirmedRequestsForEvents(events);
+        commonEventService.setViewsAndRequestsToEvents(events);
         commonEventService.sendStat(events, request);
         log.debug("Get event`s list with parameters");
         return eventMapper.mapToListEventShortDto(events);
@@ -117,8 +117,8 @@ public class PublicEventServiceImpl implements PublicEventService {
 
     @Override
     public EventFullDto getEventById(Long eventId, HttpServletRequest request) {
-        Event event = commonEventService.getEventOrThrowException(eventId);
-        commonEventService.setViewAndConfirmedRequestRequestsForTheEvent(event);
+        Event event = commonEventService.findEventById(eventId);
+        commonEventService.setViewsAndRequestsToEvent(event);
         commonEventService.sendStat(event, request);
         log.debug("Get event with ID = {} from public service", event);
         return eventMapper.mapToEventFullDto(event);
