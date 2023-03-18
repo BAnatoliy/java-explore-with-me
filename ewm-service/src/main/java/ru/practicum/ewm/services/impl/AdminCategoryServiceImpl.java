@@ -27,6 +27,13 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
         this.categoryMapper = categoryMapper;
     }
 
+    /**
+     * This method saves the category`s data obtained from the NewCategoryDto
+     * in the database.
+     * @param newCategoryDto {@link ru.practicum.ewm.dtos.NewCategoryDto dto} which category is created from
+     * @return {@link ru.practicum.ewm.dtos.CategoryDto CategoryDto} gotten from
+     * {@link ru.practicum.ewm.models.Category Category}
+     */
     @Override
     @Transactional
     public CategoryDto createCategory(NewCategoryDto newCategoryDto) {
@@ -36,21 +43,33 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
         return categoryMapper.mapToCategoryDto(savedCategory);
     }
 
+    /**
+     * This method deletes the category by ID from the database
+     * @param catId ID of category which will be deleted
+     */
     @Override
     @Transactional
     public void deleteCategory(Long catId) {
-        Category category = categoryService.findCategoryById(catId);
-        if (!category.getEvents().isEmpty()) {
+        Category category = categoryService.findCategoryById(catId); //поиск категории по ID, если не найдена - исключение
+        if (!category.getEvents().isEmpty()) { //если в категории есть события ее невозможно удалить
             throw new ValidEntityException("The category is not empty");
         }
         categoryRepository.deleteById(catId);
         log.debug("Category with ID = {} is deleted", catId);
     }
 
+    /**
+     * This method updates the category`s data obtained from the NewCategoryDto
+     * in the database.
+     * @param newCategoryDto {@link ru.practicum.ewm.dtos.NewCategoryDto dto} which the category is updated from
+     * @param catId ID of category which will be updated
+     * @return {@link ru.practicum.ewm.dtos.CategoryDto CategoryDto} gotten from
+     * {@link ru.practicum.ewm.models.Category Category}
+     */
     @Override
     @Transactional
     public CategoryDto updateCategory(Long catId, NewCategoryDto newCategoryDto) {
-        categoryService.findCategoryById(catId);
+        categoryService.findCategoryById(catId); //поиск категории по ID, если не найдена - исключение
         Category category = categoryMapper.mapToCategoryFromNewCategoryDto(newCategoryDto);
         category.setId(catId);
         category.setName(newCategoryDto.getName());

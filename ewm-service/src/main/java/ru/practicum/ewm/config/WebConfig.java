@@ -11,6 +11,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.time.format.DateTimeFormatter;
 
+/**
+ * This configuration set {@link #DATE_TIME_FORMATTER format of the pattern}
+ * for LocalDateTime while reading from String
+ */
+
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     private static final DateTimeFormatter DATE_TIME_FORMATTER =

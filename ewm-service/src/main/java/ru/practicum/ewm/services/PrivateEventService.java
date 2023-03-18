@@ -12,7 +12,7 @@ public interface PrivateEventService {
 
     EventFullDto createEventByUser(Long userId, NewEventDto newEventDto);
 
-    EventFullDto getEventsByIdByInitiator(Long userId, Long eventId);
+    EventFullDto getEventsById(Long userId, Long eventId);
 
     EventFullDto updateEventByUser(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest);
 }

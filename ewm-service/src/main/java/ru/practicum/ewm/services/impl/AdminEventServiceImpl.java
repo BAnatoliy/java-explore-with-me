@@ -46,6 +46,17 @@ public class AdminEventServiceImpl implements AdminEventService {
         this.entityManager = entityManager;
     }
 
+    /**
+     * This method searches for events by parameters
+     * @param users list of user`s ID for searching
+     * @param states list of statuses for searching
+     * @param categories list of categories for searching
+     * @param rangeStart the start time of the interval in which events are held
+     * @param rangeEnd the end time of the interval in which events are held
+     * @param from amount of rows to skip
+     * @param size amount rows to getting
+     * @return list of {@link EventFullDto}
+     */
     @Override
     public List<EventFullDto> getEvents(List<Long> users, List<EventState> states, List<Long> categories,
                                         LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
@@ -55,6 +66,7 @@ public class AdminEventServiceImpl implements AdminEventService {
         Root<Event> root = query.from(Event.class);
         Predicate criteria = builder.conjunction();
 
+        //время начала интервала, в котором происходят события, не должно быть позже его конца
         if (rangeStart != null && rangeEnd != null) {
             if (rangeEnd.isBefore(rangeStart)) {
                 throw new ValidEntityException("rangeEnd must be after rangeStart");
@@ -91,11 +103,19 @@ public class AdminEventServiceImpl implements AdminEventService {
         if (events.size() == 0) {
             return new ArrayList<>();
         }
-        commonEventService.setViewsAndRequestsToEvents(events);
+        commonEventService.setViewsAndRequestsToEvents(events); //для событий задается количество просмотров и запросов
         log.debug("Get event`s list with parameters");
         return eventMapper.mapToListEventFullDto(events);
     }
 
+    /**
+     * This method updates the event`s data obtained from the NewCategoryDto
+     * in the database.
+     * @param updateEventAdminRequest {@link ru.practicum.ewm.dtos.UpdateEventAdminRequest dto} which the category is updated from
+     * @param eventId ID of event which will be updated
+     * @return {@link ru.practicum.ewm.dtos.EventFullDto EventFullDto} gotten from
+     * {@link ru.practicum.ewm.models.Event Event}
+     */
     @Override
     public EventFullDto updateEvent(Long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
         Event oldEvent = commonEventService.findEventById(eventId);
@@ -142,6 +162,11 @@ public class AdminEventServiceImpl implements AdminEventService {
         return eventMapper.mapToEventFullDto(savedEvent);
     }
 
+    /**
+     * This method checks value of {@link UpdateEventAdminRequest dto} and {@link EventState state of event} to update
+     * @param updateEventAdminRequest dto to update the event
+     * @param event to get the state of
+     */
     private void validUpdateEvent(UpdateEventAdminRequest updateEventAdminRequest, Event event) {
         LocalDateTime eventDate = updateEventAdminRequest.getEventDate();
         if (eventDate != null && eventDate.isBefore(LocalDateTime.now().plusHours(1L))) {

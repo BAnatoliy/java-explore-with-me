@@ -63,6 +63,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto createComment(NewCommentDto newCommentDto, Long userId, Long eventId) {
         User author = userService.findUserById(userId);
         Event event = commonEventService.findEventById(eventId);
+        //проверка является ли автор комментария участником события
         requestRepository.findByRequester_IdAndEvent_IdAndStatusIs(userId, eventId, RequestStatus.CONFIRMED)
                 .orElseThrow(() ->
                         new ValidEntityException(String.format("User with ID = %s wasn`t participant by event with ID = %s",
@@ -78,6 +79,15 @@ public class CommentServiceImpl implements CommentService {
         return eventMapper.mapToCommentDto(savedComment);
     }
 
+    /**
+     * This method gets list of CommentDto by create time
+     * @param createEnd the end time of the interval in which comment was created
+     * @param createStart the start time of the interval in which comment was created
+     * @param from amount of rows to skip
+     * @param size amount rows to getting
+     * @param userId ID of the author of the comment
+     * @return list of {@link CommentDto}
+     */
     @Override
     public List<CommentDto> getUserCommentsByCreateTime(Long userId, LocalDateTime createStart,
                                                         LocalDateTime createEnd, Integer from, Integer size) {
@@ -163,6 +173,7 @@ public class CommentServiceImpl implements CommentService {
     private Comment getValidComment(Long userId, Long commentId) {
         userService.findUserById(userId);
         Comment comment = findCommentById(commentId);
+        //проверка соответствия ID автора ID пользователю, который делает запрос
         if (!comment.getAuthor().getId().equals(userId)) {
             throw new ValidEntityException(String.format("User is not author comment with ID = %s", commentId));
         }
