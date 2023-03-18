@@ -41,7 +41,7 @@ public class PrivateEventController {
     @GetMapping("/{eventId}")
     public EventFullDto getEventByIdByUser(@PathVariable(value = "userId") Long userId,
                                      @PathVariable(value = "eventId") Long eventId) {
-        return privateEventService.getEventsByIdByInitiator(userId, eventId);
+        return privateEventService.getEventsById(userId, eventId);
     }
 
     @PatchMapping("/{eventId}")

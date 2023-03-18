@@ -33,17 +33,17 @@ public class CompilationPublicServiceImpl implements CompilationPublicService {
     @Override
     public List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
         List<Compilation> compilations;
-        if (pinned != null) {
+        if (pinned != null) { //получение закрепленных или незакрепленных подборок
             compilations = compilationRepository.findAllCompilation(pinned, from, size);
-        } else {
+        } else { //получения подборо без учета их закрепления
             compilations = compilationRepository.findAllCompilation(from, size);
         }
 
-        Set<Event> events = compilations.stream() //получаем уникальные event
+        Set<Event> events = compilations.stream() //получаем уникальные события
                 .flatMap(compilation -> compilation.getEvents().stream())
                 .collect(Collectors.toSet());
 
-        if (!events.isEmpty()) {
+        if (!events.isEmpty()) { //если множество события не пустое, задаем количество их просмотров и подтвержеднных запросов
             commonEventService.setViewsAndRequestsToEvents(new ArrayList<>(events));
         }
 
@@ -54,7 +54,8 @@ public class CompilationPublicServiceImpl implements CompilationPublicService {
     @Override
     public CompilationDto getCompilationsById(Long compId) {
         Compilation compilation = findCompilationById(compId);
-        Set<Event> setEvents = compilation.getEvents();
+        Set<Event> setEvents = compilation.getEvents(); //получение множества события в подборке
+        //если множество события не пустое, задаем количество их просмотров и подтвержеднных запросов
         if (!setEvents.isEmpty()) {
             commonEventService.setViewsAndRequestsToEvents(new ArrayList<>(setEvents));
         }

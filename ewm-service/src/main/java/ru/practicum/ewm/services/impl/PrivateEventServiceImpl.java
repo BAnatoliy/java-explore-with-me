@@ -42,6 +42,13 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         this.categoryMapper = categoryMapper;
     }
 
+    /**
+     * This method creates the event`s data obtained from the NewEventDto in the database
+     * @param newEventDto {@link ru.practicum.ewm.dtos.NewEventDto dto} which the event is created from
+     * @param userId user`s ID who creates the event
+     * @return {@link ru.practicum.ewm.dtos.EventFullDto EventFullDto} received from
+     * {@link ru.practicum.ewm.models.Event Event}
+     */
     @Override
     @Transactional
     public EventFullDto createEventByUser(Long userId, NewEventDto newEventDto) {
@@ -51,6 +58,7 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         }
         Event event = eventMapper.mapToEvent(newEventDto);
 
+        //получение CategoryDto по ID полученном из newEventDto
         CategoryDto categoryDto = categoryService.getCategoryById(newEventDto.getCategory());
 
         event.setCategory(categoryMapper.mapToCategoryFromCategoryDto(categoryDto));
@@ -65,20 +73,29 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         return eventMapper.mapToEventFullDto(savedEvent);
     }
 
+    /**
+     * This method gets list of EventShortDto by initiator ID
+     * @param from amount of rows to skip
+     * @param size amount rows to getting
+     * @param userId initiator`s ID of the event
+     * @return list of {@link EventShortDto EventShortDto}
+     */
     @Override
     public List<EventShortDto> getEventsByUser(Long userId, Integer from, Integer size) {
+        //проверка имееется ли в БД пользвователь с указанным ID
         userService.findUserById(userId);
         List<Event> events = eventRepository.findByUserIdByFromSize(userId, from, size);
         if (events.size() == 0) {
             return new ArrayList<>();
         }
-        commonEventService.setViewsAndRequestsToEvents(events);
+        commonEventService.setViewsAndRequestsToEvents(events); //для события задаются количества просмотров и запросов
         log.debug("Get events list by the user with ID = {}", userId);
         return eventMapper.mapToListEventShortDto(events);
     }
 
     @Override
-    public EventFullDto getEventsByIdByInitiator(Long userId, Long eventId) {
+    public EventFullDto getEventsById(Long userId, Long eventId) {
+        //проверка имееется ли в БД пользвователь с указанным ID
         userService.findUserById(userId);
         Event event = findEventById(userId, eventId);
         commonEventService.setViewsAndRequestsToEvent(event);
@@ -86,6 +103,15 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         return eventMapper.mapToEventFullDto(event);
     }
 
+    /**
+     * This method updates the event`s data obtained from the UpdateEventUserRequest
+     * in the database.
+     * @param updateEventUserRequest {@link ru.practicum.ewm.dtos.UpdateEventUserRequest dto} which the category is updated from
+     * @param eventId ID of event which will be updated
+     * @param userId ID of user who are updating the event
+     * @return {@link ru.practicum.ewm.dtos.EventFullDto EventFullDto} gotten from
+     * {@link ru.practicum.ewm.models.Event Event}
+     */
     @Override
     @Transactional
     public EventFullDto updateEventByUser(Long userId, Long eventId, UpdateEventUserRequest updateEventUserRequest) {
@@ -139,8 +165,16 @@ public class PrivateEventServiceImpl implements PrivateEventService {
         return eventMapper.mapToEventFullDto(updatedEvent);
     }
 
+    /**
+     * This method get the event data from the database by ID and check event`s initiator
+     * @param eventId ID of event which must be found
+     * @param userId ID of user who is requesting the event
+     * @return {@link ru.practicum.ewm.models.Event Event}
+     */
     private Event findEventById(Long userId, Long eventId) {
+        //поиск события по ID, если не найдено - исключение
         Event event = commonEventService.findEventById(eventId);
+        //проверка является ли пользователь, запрашивающий событие его инициатором
         if (!event.getInitiator().getId().equals(userId)) {
             throw new ValidEntityException(String.format("User with ID = %s is not initiator the event", userId));
         }

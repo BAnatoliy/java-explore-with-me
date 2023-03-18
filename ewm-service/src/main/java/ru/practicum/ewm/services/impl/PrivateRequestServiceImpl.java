@@ -47,7 +47,7 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
 
     @Override
     public List<ParticipationRequestDto> getEventRequest(Long userId, Long eventId) {
-        privateEventService.getEventsByIdByInitiator(userId, eventId);
+        privateEventService.getEventsById(userId, eventId);
         List<ParticipationRequest> eventRequests = participationRequestRepository.findAllByEvent_IdIs(eventId);
         log.debug("Get the event`s request list by event ID = {} and user ID = {}", eventId, userId);
         return requestMapper.mapToListRequestsDto(eventRequests);
@@ -57,7 +57,7 @@ public class PrivateRequestServiceImpl implements PrivateRequestService {
     @Transactional
     public EventRequestStatusUpdateResult updateRequest(Long userId, Long eventId,
                                                         EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
-        EventFullDto event = privateEventService.getEventsByIdByInitiator(userId, eventId);
+        EventFullDto event = privateEventService.getEventsById(userId, eventId);
         List<Long> requestIds = eventRequestStatusUpdateRequest.getRequestIds();
         List<ParticipationRequest> requestsToUpdate = participationRequestRepository.findAllById(requestIds);
         setNewStatusToRequest(eventRequestStatusUpdateRequest, event, requestsToUpdate);

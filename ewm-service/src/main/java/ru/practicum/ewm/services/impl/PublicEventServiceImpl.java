@@ -54,7 +54,7 @@ public class PublicEventServiceImpl implements PublicEventService {
             }
         }
 
-        if (text != null) {
+        if (text != null) { //поиск события в аннотации или описании которого есть указанный текст
             Predicate annotationContain = builder.like(builder.lower(root.get("annotation")),
                     "%" + text.toLowerCase() + "%");
             Predicate descriptionContain = builder.like(builder.lower(root.get("description")),
@@ -109,7 +109,9 @@ public class PublicEventServiceImpl implements PublicEventService {
             return new ArrayList<>();
         }
 
+        //событию задается количество просмотров и запросов
         commonEventService.setViewsAndRequestsToEvents(events);
+        //в сервис статистики сохраняются данные о просмотре событий
         commonEventService.sendStat(events, request);
         log.debug("Get event`s list with parameters");
         return eventMapper.mapToListEventShortDto(events);
@@ -117,8 +119,11 @@ public class PublicEventServiceImpl implements PublicEventService {
 
     @Override
     public EventFullDto getEventById(Long eventId, HttpServletRequest request) {
+        //поиск события по ID, если не найдено - исключение
         Event event = commonEventService.findEventById(eventId);
+        //событию задается количество просмотров и запросов
         commonEventService.setViewsAndRequestsToEvent(event);
+        //в сервис статистики сохраняются данные о просмотре события
         commonEventService.sendStat(event, request);
         log.debug("Get event with ID = {} from public service", event);
         return eventMapper.mapToEventFullDto(event);
